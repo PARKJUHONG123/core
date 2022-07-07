@@ -8,6 +8,8 @@ import hello.core.member.MemberServiceImpl;
 import hello.core.member.MemoryMemberRepository;
 import hello.core.order.OrderService;
 import hello.core.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 이 어플리케이션 전체를 설정하고 구성하는 역할
@@ -37,19 +39,23 @@ import hello.core.order.OrderServiceImpl;
  * AppConfig 처럼 객체를 생성하고 관리하면서 의존관계를 연결해주는 것
  * 
  */
+
+@Configuration /* 애플리케이션의 설정 정보 */
 public class AppConfig {
 
     /**
      * 역할에 따른 구현을 보여주지 못함
      * 중복이 있음
      */
-    
+
+    @Bean /* 스프링 컨테이너에 등록 */
     public MemberService memberService() {
         return new MemberServiceImpl(memberRepository());
         // MemoryMemberRepository 를 사용하는 (주입한) MemberServiceImpl 객체를 반환할거야
         // memberRepository 를 사용하는 MemberServiceImpl 객체를 반환할거야
     }
 
+    @Bean
     public OrderService orderService() {
         return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
@@ -58,11 +64,13 @@ public class AppConfig {
      * 역할에 따른 구현
      * 메소드명과 RETURN 타입을 보면 역할을 확인할 수 있음
      */
-    private MemoryMemberRepository memberRepository() {
+    @Bean
+    public MemoryMemberRepository memberRepository() {
         return new MemoryMemberRepository(); // 나중에 DB 로 바뀌게 되면, 여기만 바꾸면 됨
     }
 
-    private DiscountPolicy discountPolicy() {
+    @Bean
+    public DiscountPolicy discountPolicy() {
         // return new FixDiscountPolicy(); // 나중에 할인 정책이 바뀌게 되면, 여기만 바꾸면 됨
         return new RateDiscountPolicy();
     }
