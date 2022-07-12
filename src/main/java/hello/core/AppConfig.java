@@ -38,6 +38,12 @@ import org.springframework.context.annotation.Configuration;
  * DI 컨테이너 (= IOC 컨테이너)
  * AppConfig 처럼 객체를 생성하고 관리하면서 의존관계를 연결해주는 것
  * 
+ * 
+ * XML 로도 스프링빈 설정을 할 수도 있고, 자바 코드로도 스프링빈 설정 가능
+ * -> BeanDefinition 이라는 추상화가 있기 때문에 가능
+ * 스프링은 BeanDefinition 만 알면 되기 때문에 (= BeanDefinition 에만 의존) 사용자가 스프링이 제공하는 BeanDefinition 인터페이스 정의에 맞게 설정만 해주면 XML, 자바 외에 다른 양식도 가능
+ * BeanDefinition 을 빈 설정 메타정보라고 하고, @Bean, <bean> 당 각각 하나씩 메타 정보 생성
+ * 스프링 컨테이너는 이 메타정보를 기반으로 스프링빈 생성
  */
 
 @Configuration /* 애플리케이션의 설정 정보 */

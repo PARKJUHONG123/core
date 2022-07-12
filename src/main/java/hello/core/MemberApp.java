@@ -53,6 +53,10 @@ public class MemberApp {
          * BeanFactory 나 ApplicationContext 를 스프링 컨테이너 라고 함
          */
 
+        /**
+         * AnnotationConfigApplicationContext 는 AnnotatedBeanDefinitionReader 를 사용해서 AppConfig.class 를 읽고, BeanDefinition 을 생성
+         * AppConfig.class 에 적힌 메타정보를 읽어서 생성된 BeanDefinition 을 기반으로 객체를 하나씩 불러와서 사용
+         */
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class); // 어노테이션 기반으로 선언된 Bean 을 스프링 컨테이너에 넣어서 관리함
         MemberService memberService = applicationContext.getBean("memberService", MemberService.class); // 찾고 싶은 스프링빈의 이름과 구조를 전달해서, 스프링 컨테이너에서 그에 해당되는 객체를 찾아서 반환함
 
