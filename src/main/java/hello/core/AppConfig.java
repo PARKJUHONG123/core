@@ -46,16 +46,35 @@ import org.springframework.context.annotation.Configuration;
  * 스프링 컨테이너는 이 메타정보를 기반으로 스프링빈 생성
  */
 
-@Configuration /* 애플리케이션의 설정 정보 */
+/**
+ * @Configuration
+ * 애플리케이션의 설정 정보
+ * 
+ */
+@Configuration 
 public class AppConfig {
 
     /**
-     * 역할에 따른 구현을 보여주지 못함
-     * 중복이 있음
+     * @Bean memberService -> new MemoryMemberRepository()
+     * @Bean orderService -> new MemoryMemberRepository()
+     * 
+     * 코드만 보면 MemoryMemberRepository 객체가 싱글톤 패턴을 어기고 각각 2번 생성된다고 보여짐
+     * call AppConfig.memberRepository 라는 로그가 3번은 찍혀야 할 것 같은데, 1번 밖에 호출되지 않음
+     *
+     * @Configuration
+     * 스프링 컨테이너는 싱글톤 레지스트리 이기 때문에 스프링 싱글톤이 되도록 보장해줘야 하는데, 자바 코드까지 스프링이 어떻게 하기는 어려움
+     * 바이트코드를 조작해서 AppConfig@CGLIB 이라는 자식 객체가 생성되는데, 이 자식 객체는 기존에 생성된 스프링 빈이 있으면 그것을 반환하고, 아니면 스프링 빈을 등록함
+     * 
+     * 만약에 @Configuration 이 없게 되면 스프링빈은 생성이 되지만, 싱글톤이 깨지게 됨
+     * 각각의 서비스가 각각의 객체를 생성하게 됨 
+     * 그래서 call AppConfig.memberRepository 라는 로그가 3번이 찍히게 됨
+     * (@Autowired 를 통해서 자동으로 의존 관계를 주입해서 해결이 되긴 하지만 차후 학습 예정)
+     * 
      */
 
     @Bean /* 스프링 컨테이너에 등록 */
     public MemberService memberService() {
+        System.out.println("call AppConfig.memberService");
         return new MemberServiceImpl(memberRepository());
         // MemoryMemberRepository 를 사용하는 (주입한) MemberServiceImpl 객체를 반환할거야
         // memberRepository 를 사용하는 MemberServiceImpl 객체를 반환할거야
@@ -63,6 +82,7 @@ public class AppConfig {
 
     @Bean
     public OrderService orderService() {
+        System.out.println("call AppConfig.orderService");
         return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 
@@ -72,6 +92,7 @@ public class AppConfig {
      */
     @Bean
     public MemoryMemberRepository memberRepository() {
+        System.out.println("call AppConfig.memberRepository");
         return new MemoryMemberRepository(); // 나중에 DB 로 바뀌게 되면, 여기만 바꾸면 됨
     }
 
